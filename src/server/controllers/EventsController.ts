@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { Event } from "../models/EventModel";
+import EventModel from "../models/EventModel";
 import { TEvent } from "../../../@types/types";
 
 
@@ -8,7 +8,7 @@ export const createEvent: RequestHandler = async (req, res) => {
     try {
         let newEvent = null;
         if(data){
-            newEvent = new Event({
+            newEvent = new EventModel({
                 name: data.name,
                 description: data.description,
                 endDate: data.endDate,
@@ -34,18 +34,18 @@ export const createEvent: RequestHandler = async (req, res) => {
 
 export const findAllEvents: RequestHandler = async (req, res) => {
     try{
-        const events = await Event.find();
+        const events = await EventModel.find();
         if(events)
             return res.status(200).json(events);
         return res.status(404).send('Sem eventos cadastrados');
     } catch (error) {
         return res.status(500).json({error})
     }
-} 
+}
 
 export const findEventById: RequestHandler = async (req, res) => {
     try{
-        const event = await Event.findById({_id: req.params.id});
+        const event = await EventModel.findById({_id: req.params.id});
         if(event)
             return res.status(200).json(event);
 
@@ -58,7 +58,7 @@ export const findEventById: RequestHandler = async (req, res) => {
 
 export const deleteEvent: RequestHandler = async (req, res) => {
     try{
-        const event = await Event.findById({_id: req.params.id});
+        const event = await EventModel.findById({_id: req.params.id});
         if(event)
             return res.status(200).json(event);
         return res.status(404).send('Evento não encontrado!');
@@ -70,9 +70,9 @@ export const deleteEvent: RequestHandler = async (req, res) => {
 export const updateEvent: RequestHandler = async (req, res) => {
     try{
         const data: TEvent = req.body;
-        const event = await Event.findById({_id: req.params.id});
+        const event = await EventModel.findById({_id: req.params.id});
         if(event) {
-            await Event.updateOne({_id: req.params.id}, data);
+            await EventModel.updateOne({_id: req.params.id}, data);
             return res.status(200).send('Evento atualizado com sucesso!');
         }
         return res.status(404).send('Evento não encontrado!');
