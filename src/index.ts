@@ -6,6 +6,7 @@ import UserRouter from "./routes/UserRouter";
 import bodyParser from "body-parser";
 import cors from 'cors';
 import errorMiddleware from "./server/shared/middlewares/Error";
+import cookieParser from "cookie-parser";
 
 const port = process.env.PORT || 5000;
 
@@ -14,6 +15,7 @@ server.listen(port, () => {
 });
 
 server.use(cors());
+server.use(cookieParser());
 
 server.use(eventsRouter);
 server.use(UserRouter);

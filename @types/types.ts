@@ -31,4 +31,7 @@ export type TEvent = {
     feedbacks: TFeedback[]
 }
 
-
+export type DefaultError = {
+    error: string,
+    status: number
+}
