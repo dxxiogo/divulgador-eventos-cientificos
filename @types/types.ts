@@ -31,4 +31,8 @@ export type TEvent = {
     feedbacks: TFeedback[]
 }
 
-
+export type Minicourse = {
+    subject: string,
+    registrants: TUser[],
+    ministering: string
+}
