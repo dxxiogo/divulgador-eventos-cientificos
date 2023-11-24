@@ -23,5 +23,6 @@ export const EventSchema = new Schema({
           required: true
         }
     },
+    participants: [{type: Schema.Types.ObjectId, ref: 'User'}],
     feedbacks: [{type: Schema.Types.ObjectId, ref: 'Feedback'}]
 });

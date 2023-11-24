@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { Event } from "../models/EventModel";
 import { TEvent } from "../../../@types/types";
+import { User } from "../models/UserModel";
 
 
 export const createEvent: RequestHandler = async (req, res) => {
@@ -20,8 +21,8 @@ export const createEvent: RequestHandler = async (req, res) => {
                 photo: {
                     data: req.file?.buffer,
                     contentType: req.file?.mimetype
-                }
-
+                },
+                participants: []
             })
             await newEvent.save()
             return res.status(201).json(newEvent);
@@ -80,3 +81,18 @@ export const updateEvent: RequestHandler = async (req, res) => {
         return res.status(500).json({error})
     }
 }
+
+
+// export const UserHistoryEvents: RequestHandler = async (req, res) => {    
+//     try {
+//         const user = await User.findById({_id === req.params.id}); 
+//         const events = await Event.find();
+//         const userParticipations = events.filter(event => {
+//                 let userIsIcluded = event.participants.find(participant => participant === req.params.id);
+//                 if(userIsIcluded)
+//                     return event;
+//             });
+//     } catch (err){
+
+//     }
+// }
