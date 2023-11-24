@@ -1,23 +1,48 @@
 import UserModel from "../models/UserModel";
-import { TUser } from "../../../@types/types";
+import { TUser } from '../../../@types/types';
 import { RequestHandler } from "express";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
-
-const createUser: RequestHandler = async (req, res) => {
+const createUser: RequestHandler = async (req, res, next) => {
   try {
     const data: TUser = req.body;
     if (data) {
+      const userExists = await UserModel.findOne({email: data.email});
+      if(userExists){
+        return next({ message: "Usuário já cadastrado", status: 400 });
+      }
+      const salt = await bcrypt.genSalt(10);
+      const hashPassword = await bcrypt.hash(data.password, salt);
+      data.password = hashPassword;
       const newUser = await UserModel.create(data);
-      res.status(201).json(newUser);
+
+      const token = jwt.sign({email: newUser.email}, process.env.SECRET_KEY as string, {expiresIn: process.env.JWT_EXPIRE});
+
+      res.status(201).cookie("token", token).send(newUser);
     }else {
-      res.status(400).send('Dados inválidos');
+      next({message: 'Dados inválidos', status: 400});
     }
   } catch (error) {
-    res.status(500).send({error});
+    next({message : error, status: 500});
   }
 }
 
-const deleteUser : RequestHandler = async (req, res) => {
+const loginUser : RequestHandler = async (req, res, next) => {
+  const {token} = req.cookies;
+  if(token){
+    return next({error: 'Usuário já autenticado', status: 401})
+  }
+  const user = await UserModel.findOne({email: req.body.email});
+  const password = user?.password as string
+  const match = await bcrypt.compare(password, req.body.password);
+  if(match){
+    const token = jwt.sign({email: user?.email}, process.env.SECRET_KEY as string, {expiresIn: process.env.JWT_EXPIRE});
+    res.status(200).cookie("token", token).send(user);
+  }
+}
+
+const deleteUser : RequestHandler = async (req, res, next) => {
   try{
     let userEmail = req.params.email
     if(userEmail){
@@ -27,38 +52,38 @@ const deleteUser : RequestHandler = async (req, res) => {
       if (deleted){
         res.status(200).send('Usuário deletado com sucesso')
       }else{
-        res.status(404).send('Usuário não encontrado')
+        next({message: 'Usuário não encontrado', status: 404});
       }
     }
   }catch(error){
-    res.status(500).send({error})
+    next({message: error, status: 500});
   }
 }
 
-const findUser : RequestHandler = async (req, res) => {
+const findUser : RequestHandler = async (req, res, next) => {
   try{
     let userEmail = req.params.email;
     if(userEmail){
       const user = await UserModel.findOne({email: userEmail})
       res.status(200).send(user);
     }else {
-      res.status(400).send('Email inválido');
+      next({message: 'Email inválido', status: 400});
     }
   }catch(error){
-    res.status(500).send({error})
+    next({message: error, status: 500});
   }
 }
 
-const findAllUsers : RequestHandler =async (req , res) => {
+const findAllUsers : RequestHandler =async (req , res, next) => {
   try {
     const users = await UserModel.find();
     res.status(200).send(users);
   } catch (error) {
-    res.status(500).send({error})
+    next({message: error, status: 500});
   }
 }
 
-const updateUser : RequestHandler = async (req, res) => {
+const updateUser : RequestHandler = async (req, res, next) => {
   try {
     let userEmail = req.params.email;
     let data: TUser = req.body;
@@ -66,11 +91,11 @@ const updateUser : RequestHandler = async (req, res) => {
       const user = await UserModel.updateOne({email: userEmail}, data);
       res.status(200).send(user);
     }else {
-      res.status(400).send('Dados inválidos');
+      next({message: 'Dados inválidos', status: 400});
     }
   } catch (error) {
-    res.status(500).send({error})
+    next({message: error, status: 500});
   }
 }
 
-export default { createUser, deleteUser, findUser, findAllUsers, updateUser };
+export default { createUser, deleteUser, findUser, findAllUsers, updateUser, loginUser };
