@@ -3,6 +3,7 @@ import 'dotenv/config'
 import { tryConnection } from "./server/database/MongoConnect";
 import { eventsRouter } from "./routes/EventsRouter";
 import UserRouter from "./routes/UserRouter";
+import ArticleRouter from "./routes/ArticleRouter";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser"
 import errorMiddleware from "./server/shared/middlewares/Error";
@@ -17,6 +18,7 @@ server.use(cookieParser());
 
 server.use(eventsRouter);
 server.use(UserRouter);
+server.use(ArticleRouter);
 
 server.use(errorMiddleware);
 

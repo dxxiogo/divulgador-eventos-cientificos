@@ -7,6 +7,15 @@ export type TUser = {
     educationLevel: string
 }
 
+export type TArticle ={
+    writerId?: String,
+    title: String,
+    theme: String,
+    content: String,
+    publicationDate: Date,
+    presentationDate: Date
+};
+
 export type TFeedback = {
     date: Date,
     user: TUser,
