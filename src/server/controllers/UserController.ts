@@ -1,8 +1,10 @@
 import UserModel from "../models/UserModel";
 import { TUser } from '../../../@types/types';
 import { RequestHandler } from "express";
-import bcrypt from 'bcrypt';
+import bcrypt, { genSalt, genSaltSync } from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
+const salt = 10;
 
 const createUser: RequestHandler = async (req, res, next) => {
   try {
@@ -12,13 +14,12 @@ const createUser: RequestHandler = async (req, res, next) => {
       if(userExists){
         return next({ message: "Usuário já cadastrado", status: 400 });
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashPassword = await bcrypt.hash(data.password, salt);
+      const hashPassword = await bcrypt.hash(data.password, genSaltSync(salt));
       data.password = hashPassword;
       const newUser = await UserModel.create(data);
 
       const token = jwt.sign({email: newUser.email}, process.env.SECRET_KEY as string, {expiresIn: process.env.JWT_EXPIRE});
-
+      newUser.password = undefined;
       res.status(201).cookie("token", token).send(newUser);
     }else {
       next({message: 'Dados inválidos', status: 400});
@@ -34,11 +35,15 @@ const loginUser : RequestHandler = async (req, res, next) => {
     return next({error: 'Usuário já autenticado', status: 401})
   }
   const user = await UserModel.findOne({email: req.body.email});
+
   const password = user?.password as string
-  const match = await bcrypt.compare(password, req.body.password);
+  const match = await bcrypt.compare(req.body.password, password);
   if(match){
     const token = jwt.sign({email: user?.email}, process.env.SECRET_KEY as string, {expiresIn: process.env.JWT_EXPIRE});
+    if(user?.password) user.password = undefined;
     res.status(200).cookie("token", token).send(user);
+  }else{
+    next({error: 'Email ou senha inválidos', status: 401})
   }
 }
 
