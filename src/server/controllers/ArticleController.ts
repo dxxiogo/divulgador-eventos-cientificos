@@ -1,13 +1,15 @@
 import ArticleModel from "../models/ArticleModel";
 import { TArticle } from '../../../@types/types';
-import { RequestHandler } from "express";
+import { RequestHandler, Response } from 'express';
 import { ObjectId } from "mongodb";
+import { sendEmails } from "../EmailConfig";
 
 const createArticle: RequestHandler = async (req, res, next) => {
   try {
     const data: TArticle = req.body;
     if (data) {
       const newArticle = await ArticleModel.create(data);
+      sendEmails("Artigo", newArticle._id.toString());
       res.status(201).send(newArticle);
     }else {
       next({message: 'Dados inválidos', status: 400});
