@@ -6,5 +6,6 @@ export const UserSchema = new Schema({
     age: Number,
     password: String,
     address: String,
-    educationLevel: String
+    educationLevel: String,
+    wantEmails: Boolean
 })
