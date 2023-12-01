@@ -3,10 +3,10 @@ import { Router } from "express";
 import {isAuthenticated} from "../server/shared/middlewares/Auth";
 const ArticleRouter = Router();
 
-ArticleRouter.post("/artigo", isAuthenticated, ArticleController.createArticle);
-ArticleRouter.get("/artigo", isAuthenticated ,ArticleController.findAllArticles);
-ArticleRouter.get("/artigo/:id", isAuthenticated, ArticleController.findArticle);
-ArticleRouter.delete("/artigo/:id", isAuthenticated,ArticleController.deleteArticle);
-ArticleRouter.put("/artigo/:id",  isAuthenticated,ArticleController.updateArticle);
+ArticleRouter.post("/", isAuthenticated, ArticleController.createArticle);
+ArticleRouter.get("/", isAuthenticated ,ArticleController.findAllArticles);
+ArticleRouter.get("/:id", isAuthenticated, ArticleController.findArticle);
+ArticleRouter.delete("/:id", isAuthenticated,ArticleController.deleteArticle);
+ArticleRouter.put("/:id",  isAuthenticated,ArticleController.updateArticle);
 
 export default ArticleRouter;

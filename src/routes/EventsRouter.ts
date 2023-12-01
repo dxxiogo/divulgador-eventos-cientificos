@@ -5,13 +5,13 @@ import { upload } from "../server/shared/middlewares/Multer";
 export const eventsRouter = Router();
 
 
-eventsRouter.get('/evento', findAllEvents);
+eventsRouter.get('/', findAllEvents);
 
-eventsRouter.get('/evento/:id', findEventById);
+eventsRouter.get('/:id', findEventById);
 
-eventsRouter.post('/evento', upload.single('photo'), createEvent);
+eventsRouter.post('/', upload.single('photo'), createEvent);
 
-eventsRouter.delete('/evento/:id', deleteEvent);
+eventsRouter.delete('/:id', deleteEvent);
 
-eventsRouter.put('/evento/:id', updateEvent);
+eventsRouter.put('/:id', updateEvent);
 

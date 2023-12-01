@@ -8,6 +8,9 @@ import bodyParser from "body-parser";
 import cors from 'cors';
 import errorMiddleware from "./server/shared/middlewares/Error";
 import cookieParser from "cookie-parser";
+import { requestMinicoursesRouter } from "./routes/RequestMinicourseRouter";
+import { minicoursesRouter } from "./routes/MinicourseRouter";
+import { feedbackRouter } from "./routes/FeedbackRouter";
 
 const port = process.env.PORT || 5000;
 
@@ -18,9 +21,12 @@ server.listen(port, () => {
 server.use(cors());
 server.use(cookieParser());
 
-server.use(eventsRouter);
-server.use(UserRouter);
-server.use(ArticleRouter);
+server.use('/evento', eventsRouter);
+server.use('/usuario', UserRouter);
+server.use('/artigo', ArticleRouter);
+server.use('/requesicao-minicurso', requestMinicoursesRouter);
+server.use('/minicurso', minicoursesRouter)
+server.use('/feedback', feedbackRouter);
 
 server.use(errorMiddleware);
 

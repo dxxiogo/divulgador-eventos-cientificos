@@ -1,14 +1,15 @@
 import { Router } from "express";
+import { createMinicourse, deleteMinicourse, findAllMinicourse, findMinicourseById, updateMinicourse } from "../server/controllers/MInicourseController";
 
 export const minicoursesRouter = Router();
 
 
-minicoursesRouter.get('/minicourses', findAllMinicourses);
+minicoursesRouter.get('/', findAllMinicourse);
 
-minicoursesRouter.get('/minicourse/:id', findMinicourseById);
+minicoursesRouter.get('/:id', findMinicourseById);
 
-minicoursesRouter.post('/minicourse', createMinicourse);
+minicoursesRouter.post('/', createMinicourse);
 
-minicoursesRouter.delete('/minicourse/:id', deleteminicourse);
+minicoursesRouter.delete('/:id', deleteMinicourse);
 
-minicoursesRouter.put('/minicourse/:id', updateMinicourse);
+minicoursesRouter.put('/:id', updateMinicourse);
