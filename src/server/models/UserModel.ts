@@ -1,5 +1,14 @@
-import { UserSchema } from "../schema/UserSchema";
 import mongoose from "mongoose";
 
+import {Schema} from 'mongoose';
 
-export default mongoose.model("User", UserSchema);
+const UserSchema = new Schema({
+    email: String,
+    name: String,
+    age: Number,
+    password: String,
+    address: String,
+    educationLevel: String,
+    wantEmails: Boolean
+})
+export default mongoose.model("Usuario", UserSchema);
