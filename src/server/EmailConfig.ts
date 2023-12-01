@@ -1,21 +1,12 @@
 import nodemailer from "nodemailer";
 import UserModel from "./models/UserModel";
 
-export const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.GMAIL_SENDER,
-        pass: process.env.GMAIL_PASSWORD
-    },
-    from: process.env.GMAIL_SENDER
-});
-
 export function emailStructure(alertType : string, link : string){
   return `<!DOCTYPE html>
   <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notificação de Novo Artigo Científico</title>
     <style>
       body {
@@ -88,18 +79,32 @@ export function emailStructure(alertType : string, link : string){
 }
 
 export const sendEmails = async (type : string, id : string) => {
+  console.log("Enviando email")
+  const testAccount = await nodemailer.createTestAccount();
+  console.log(testAccount);
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.ethereal.email',
+    port: 587,
+    secure: false,
+    auth: {
+        user: testAccount.user,
+        pass: testAccount.pass
+    }
+  });
+
+
   const users = await UserModel.find({wantEmails: true});
   const recievers = users.map(user => user.email);
+  console.log(recievers);
   let emailOptions = {
+    from: "Sistema de Gerenciamento de Eventos Científicos",
     to: recievers.join(',') as string,
     subject: `Novo ${type} Publicado`,
     html: emailStructure(type, `http://localhost:3000/${type}/${id}`)
   }
-  transporter.sendMail(emailOptions, (err: any, info: any) => {
-    if(err){
-      console.log(err);
-    }else{
-      console.log("Email enviado: "+info.response);
-    }
-  })
+  transporter.sendMail(emailOptions).then((info) =>{
+    console.log(info);
+  }).catch((err)=>{
+    console.log(err);
+  });
 }

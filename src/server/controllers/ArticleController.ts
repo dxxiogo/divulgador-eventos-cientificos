@@ -9,7 +9,7 @@ const createArticle: RequestHandler = async (req, res, next) => {
     const data: TArticle = req.body;
     if (data) {
       const newArticle = await ArticleModel.create(data);
-      sendEmails("Artigo", newArticle._id.toString());
+      await sendEmails("artigo", newArticle._id.toString());
       res.status(201).send(newArticle);
     }else {
       next({message: 'Dados inválidos', status: 400});
