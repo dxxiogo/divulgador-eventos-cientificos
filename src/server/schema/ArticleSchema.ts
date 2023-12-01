@@ -5,6 +5,10 @@ export const ArticleSchema = new Schema({
     title: String,
     theme: String,
     content: String,
+    fileContent: {
+        data: {type: Buffer, required: false},
+        contentType: {type: String, required: false}
+    },
     publicationDate: Date,
     presentationDate: Date
 });
