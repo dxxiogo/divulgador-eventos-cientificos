@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createMinicourse, deleteMinicourse, findAllMinicourse, findMinicourseById, updateMinicourse } from "../server/controllers/MInicourseController";
+import { createMinicourse, deleteMinicourse, findAllMinicourse, findMinicourseById, updateMinicourse } from "../server/controllers/MinicourseController";
 
 export const minicoursesRouter = Router();
 
