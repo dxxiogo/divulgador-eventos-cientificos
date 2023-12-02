@@ -19,7 +19,8 @@ export type TArticle ={
 export type TFeedback = {
     date: Date,
     user: TUser,
-    content: string
+    content: string,
+    idEvent: string
 }
 
 export type TEvent = {
@@ -29,6 +30,7 @@ export type TEvent = {
     organizingCommitte: string,
     startDate: Date,
     endDate: Date,
+    organizer: string,
     photo: {
         data: Buffer,
         contentType: String
@@ -43,4 +45,23 @@ export type TEvent = {
 export type DefaultError = {
     error: string,
     status: number
+}
+
+export type TMinicourse = {
+    subject: string,
+    ministering: string,
+    registrants: string[]
+    idEvent: string
+}
+
+export type THackaton = {
+    name: string,
+    teams: string[],
+    idEvent: string
+} 
+
+export type TTeam = {
+    name: string,
+    members: string[],
+    idHackathon: string
 }
