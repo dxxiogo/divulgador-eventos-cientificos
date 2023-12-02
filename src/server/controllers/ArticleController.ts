@@ -8,7 +8,15 @@ const createArticle: RequestHandler = async (req, res, next) => {
   try {
     const data: TArticle = req.body;
     if (data) {
+      if(req.file?.buffer && req.file?.mimetype ){
+        data.fileContent =  {
+          data: req.file?.buffer,
+          contentType: req.file?.mimetype
+        }
+      }
+
       const newArticle = await ArticleModel.create(data);
+
       await sendEmails("artigo", newArticle._id.toString());
       res.status(201).send(newArticle);
     }else {

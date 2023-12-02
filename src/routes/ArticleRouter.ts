@@ -2,6 +2,7 @@ import ArticleController from "../server/controllers/ArticleController";
 import { Router } from "express";
 import {isAuthenticated} from "../server/shared/middlewares/Auth";
 const ArticleRouter = Router();
+import { upload } from "../server/shared/middlewares/Multer";
 
 ArticleRouter.post("/", isAuthenticated, ArticleController.createArticle);
 ArticleRouter.get("/", isAuthenticated ,ArticleController.findAllArticles);

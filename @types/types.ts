@@ -12,6 +12,10 @@ export type TArticle ={
     title: String,
     theme: String,
     content: String,
+    fileContent: {
+        data: Buffer | undefined,
+        contentType: String | undefined
+    },
     publicationDate: Date,
     presentationDate: Date
 };
