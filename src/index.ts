@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import { requestMinicoursesRouter } from "./routes/RequestMinicourseRouter";
 import { minicoursesRouter } from "./routes/MinicourseRouter";
 import { feedbackRouter } from "./routes/FeedbackRouter";
+import { teamsRouter } from "./routes/TeamsRouter";
+import { hackathonRouter } from "./routes/HackathonRouter";
 
 const port = process.env.PORT || 5000;
 
@@ -27,6 +29,8 @@ server.use('/artigo', ArticleRouter);
 server.use('/requesicao-minicurso', requestMinicoursesRouter);
 server.use('/minicurso', minicoursesRouter)
 server.use('/feedback', feedbackRouter);
+server.use('/time', teamsRouter);
+server.use('/hackathon', hackathonRouter);
 
 server.use(errorMiddleware);
 
