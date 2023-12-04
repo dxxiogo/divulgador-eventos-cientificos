@@ -91,7 +91,7 @@ export const getCertificates: RequestHandler = async (req, res) => {
             const event : TEvent | null = await EventModel.findById(req.params.id);
             if ( !event ) return res.status(404).send('Evento não encontrado!');
             if(event?.participants.includes(user._id)){
-                const certificate = createCertificate(event.name, event.startDate.getDate().toString(), user.name);
+                const certificate = createCertificate(event.name, event.startDate.toString(), user.name);
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
                 await page.setContent(certificate);
