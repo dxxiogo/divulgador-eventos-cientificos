@@ -1,4 +1,7 @@
+import { ObjectId } from "mongodb";
+
 export type TUser = {
+    _id: ObjectId
     email: string,
     name: string,
     age: number,
@@ -43,7 +46,8 @@ export type TEvent = {
         type: 'Point',
         coordinates: number[]
     },
-    feedbacks: TFeedback[]
+    feedbacks: TFeedback[],
+    participants: ObjectId[]
 }
 
 export type DefaultError = {
