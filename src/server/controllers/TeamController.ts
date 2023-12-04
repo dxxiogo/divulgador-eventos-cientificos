@@ -1,13 +1,12 @@
 import { RequestHandler } from "express";
-import { TMinicourse, TTeam } from "../../../@types/types";
-import EventModel from "../models/EventModel";
-import FeedbackModel from "../models/FeedbackModel";
+import { TTeam } from "../../../@types/types";
 import TeamModel from "../models/TeamModel";
-import HackathonModel from "../models/HackathonModel";
 import { ObjectId } from "mongodb";
+import HackathonModel from "../models/HackathonModel";
 
 export const createTeam: RequestHandler = async (req, res, next) => {
     const data: TTeam = req.body;
+    console.log(data);
     try {
         const hackathon = await HackathonModel.findById(data.idHackathon);
         if(!hackathon)
@@ -70,7 +69,8 @@ export const updateTeam: RequestHandler = async (req, res, next) => {
         const data: TTeam = req.body;
         const team = await TeamModel.findById({_id: req.params.id});
         if(team) {
-            await team.updateOne({_id: req.params.id}, data);
+            console.log(data);
+            await TeamModel.updateOne({_id: req.params.id}, data);
             return res.status(200).send('Time atualizado com sucesso!');
         }
         next({message: 'Time não encontrado', status: 404});

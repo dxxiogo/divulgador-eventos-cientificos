@@ -1,4 +1,5 @@
 import express from 'express';
+import './shared/services/YupTranslation';
 
 const server = express();
 

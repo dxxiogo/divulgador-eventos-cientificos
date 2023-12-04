@@ -33,10 +33,6 @@ export const eventSchema = yup.object().shape({
       data: yup.mixed(),
       contentType: yup.string(),
     }),
-    location: yup.object().shape({
-      type: yup.string().oneOf(['Point']),
-      coordinates: yup.array().of(yup.number()),
-    }),
     participants: yup.array().of(yup.string().required()),
     feedbacks: yup.array().of(yup.string().required()),
   });

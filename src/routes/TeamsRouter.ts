@@ -1,15 +1,18 @@
 import { Router } from "express";
-import { createMinicourse, deleteMinicourse, findAllMinicourse, findMinicourseById, updateMinicourse } from "../server/controllers/MinicourseController";
+import { createTeam, deleteTeam, findAllTeam, findTeamById, updateTeam } from "../server/controllers/TeamController";
+import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
+import { teamSchema } from "../server/schema/YupSchemas";
 
 export const teamsRouter = Router();
 
+const teamBodyValidator = bodyValidator(teamSchema);
 
-teamsRouter.get('/', findAllMinicourse);
+teamsRouter.get('/', findAllTeam);
 
-teamsRouter.get('/:id', findMinicourseById);
+teamsRouter.get('/:id', findTeamById);
 
-teamsRouter.post('/', createMinicourse);
+teamsRouter.post('/', createTeam);
 
-teamsRouter.delete('/:id', deleteMinicourse);
+teamsRouter.delete('/:id', deleteTeam);
 
-teamsRouter.put('/:id', updateMinicourse);
+teamsRouter.put('/:id', updateTeam);

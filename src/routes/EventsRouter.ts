@@ -12,7 +12,7 @@ eventsRouter.get('/', findAllEvents);
 
 eventsRouter.get('/:id', findEventById);
 
-eventsRouter.post('/', eventBodyValidator, upload.single('photo'), createEvent);
+eventsRouter.post('/',upload.single('photo'), eventBodyValidator, createEvent);
 
 eventsRouter.delete('/:id', deleteEvent);
 
