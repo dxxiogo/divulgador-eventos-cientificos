@@ -1,16 +1,19 @@
 import { RequestHandler } from "express";
 import EventModel from "../models/EventModel";
 import { TEvent } from "../../../@types/types";
-import { User } from "../models/UserModel";
+import User  from "../models/UserModel";
+import { ObjectId } from "mongodb";
+import UserModel from "../models/UserModel";
 
 
-export const createEvent: RequestHandler = async (req, res) => {
+export const createEvent: RequestHandler = async (req, res, next) => {
     const data: TEvent = req.body;
     try {
         let newEvent = null;
         if(data){
             newEvent = new EventModel({
                 name: data.name,
+                organizer: data.organizer,
                 description: data.description,
                 endDate: data.endDate,
                 startDate: data.startDate,
@@ -27,13 +30,13 @@ export const createEvent: RequestHandler = async (req, res) => {
             await newEvent.save()
             return res.status(201).json(newEvent);
         }
-        return res.status(400).send('Não foi possível adicionar o novo evento. Informe todos os dados necessários');
+        next({message: 'Não foi possível adicionar o evento!', status: 400});;
     } catch (err) {
         return res.status(500).json({err});
     }
 }
 
-export const findAllEvents: RequestHandler = async (req, res) => {
+export const findAllEvents: RequestHandler = async (req, res, next) => {
     try{
         const events = await EventModel.find();
         if(events)
@@ -44,31 +47,36 @@ export const findAllEvents: RequestHandler = async (req, res) => {
     }
 }
 
-export const findEventById: RequestHandler = async (req, res) => {
+export const findEventById: RequestHandler = async (req, res, next) => {
     try{
         const event = await EventModel.findById({_id: req.params.id});
         if(event)
             return res.status(200).json(event);
-
-        return res.status(404).send('Evento não encontrado!');
+        next({message: 'Evento não encontrado', status: 404});
     } catch (error) {
         return res.status(500).json({error})
     }
 }
 
 
-export const deleteEvent: RequestHandler = async (req, res) => {
+export const deleteEvent: RequestHandler = async (req, res, next) => {
     try{
-        const event = await EventModel.findById({_id: req.params.id});
-        if(event)
-            return res.status(200).json(event);
-        return res.status(404).send('Evento não encontrado!');
-    } catch (error) {
-        return res.status(500).json({error})
+      let id = req.params.id
+      if(!ObjectId.isValid(id)){
+        return next({message: 'ID invalido', status: 400});
+      }
+      const deleted = await EventModel.deleteOne({_id: id})
+      if (deleted){
+        res.status(200).send('Evento deletado com sucesso')
+      }else{
+        next({message: 'Evento não encontrado', status: 404});
+      }
+    }catch(error){
+      next({message: error, status: 500});
     }
-}
+  }
 
-export const updateEvent: RequestHandler = async (req, res) => {
+export const updateEvent: RequestHandler = async (req, res, next) => {
     try{
         const data: TEvent = req.body;
         const event = await EventModel.findById({_id: req.params.id});
@@ -76,23 +84,49 @@ export const updateEvent: RequestHandler = async (req, res) => {
             await EventModel.updateOne({_id: req.params.id}, data);
             return res.status(200).send('Evento atualizado com sucesso!');
         }
-        return res.status(404).send('Evento não encontrado!');
+        next({message: 'Evento não encontrado', status: 404});
     } catch (error) {
-        return res.status(500).json({error})
+        next({message: error, status: 500});
     }
 }
 
 
-// export const UserHistoryEvents: RequestHandler = async (req, res) => {    
-//     try {
-//         const user = await User.findById({_id === req.params.id}); 
-//         const events = await Event.find();
-//         const userParticipations = events.filter(event => {
-//                 let userIsIcluded = event.participants.find(participant => participant === req.params.id);
-//                 if(userIsIcluded)
-//                     return event;
-//             });
-//     } catch (err){
 
-//     }
-// }
+export const UserHistoryEvents: RequestHandler = async (req, res, next) => {    
+    try {
+        const userId = req.params.userId as string;
+        const user = await User.findById({_id: userId}); 
+        const events = await EventModel.find();
+        if(!user)
+            return next({message: 'Usuário não encontrado', status: 404});
+        const participededEvents = events.filter(event => {
+            if(event.participants.includes(user._id))
+                return event;
+        })
+        return res.status(200).json(participededEvents);
+    } catch (err){
+        console.log(err);
+    }
+}
+
+export const EventsByLocation: RequestHandler = async (req, res, next) => {    
+    try {
+        const lat = parseFloat(req.params.lat as string);
+        const lng = parseFloat(req.params.lng as string);
+        console.log(lat, lng);
+        if(!lat || !lng)
+            return next({message: "Informe uma localização válida", status: 400})
+        const events = await EventModel.find({
+            location: {
+                        type: 'Point',
+                        coordinates: [lng, lat]
+                    },
+                }
+        );
+        if(events)
+            return res.status(200).send(events);
+        next({message: "Não foi possível encontrar eventos com a localização informada", status: 400})
+    } catch (error){
+        next({message: error, status: 500});
+    }
+}
