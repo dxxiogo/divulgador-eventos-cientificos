@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { TMinicourse } from "../../../@types/types";
 import EventModel from "../models/EventModel";
-import { Minicourse } from "../models/Minicourse";
+import { Minicourse } from "../models/MinicourseModel";
 import RequestMinicourse from "../models/RequestMinicourseModel";
 import { ObjectId } from "mongodb";
 

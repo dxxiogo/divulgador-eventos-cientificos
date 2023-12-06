@@ -11,8 +11,8 @@ requestMinicoursesRouter.get('/', RequestMinicourseController.findAllRequestMini
 
 requestMinicoursesRouter.get('/:id', RequestMinicourseController.findRequestMinicourseById);
 
-requestMinicoursesRouter.post('/', RequestMinicourseController.createRequestMinicourse);
+requestMinicoursesRouter.post('/', requestMinicourseBodyValidator, RequestMinicourseController.createRequestMinicourse);
 
 requestMinicoursesRouter.delete('/:id', RequestMinicourseController.deleteRequestMinicourse);
 
-requestMinicoursesRouter.put('/:id', RequestMinicourseController.updateRequestMinicourse);
+requestMinicoursesRouter.put('/:id',requestMinicourseBodyValidator,  RequestMinicourseController.updateRequestMinicourse);

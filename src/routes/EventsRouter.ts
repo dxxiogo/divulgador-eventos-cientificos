@@ -1,9 +1,10 @@
 import { Router } from "express";
 import EventController from "../server/controllers/EventsController";
 import { upload } from "../server/shared/middlewares/Multer";
+import { get } from "mongoose";
+import { isAuthenticated } from "../server/shared/middlewares/Auth";
 import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
 import { eventSchema } from "../server/shared/services/YupSchemas";
-import { isAuthenticated } from "../server/shared/middlewares/Auth";
 
 export const eventsRouter = Router();
 
@@ -24,3 +25,9 @@ eventsRouter.put('/:id', EventController.updateEvent);
 eventsRouter.get('/historico-de-eventos/:userId', EventController.UserHistoryEvents);
 
 eventsRouter.get('/eventos-por-localizacao/:lat/:lng', EventController.EventsByLocation);
+
+eventsRouter.get('/:id/certificates/:userid', EventController.getCertificates);
+
+eventsRouter.post('/:id/addParticipant/:email', EventController.addParticipant);
+
+eventsRouter.post('/:id/removeParticipant/:email', EventController.removeParticipant);
