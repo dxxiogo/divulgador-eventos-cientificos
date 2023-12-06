@@ -3,10 +3,8 @@ import EventModel from "../models/EventModel";
 import { TEvent } from "../../../@types/types";
 import User  from "../models/UserModel";
 import { ObjectId } from "mongodb";
-import UserModel from "../models/UserModel";
 
-
-export const createEvent: RequestHandler = async (req, res, next) => {
+const createEvent: RequestHandler = async (req, res, next) => {
     const data: TEvent = req.body;
     try {
         let newEvent = null;
@@ -36,7 +34,7 @@ export const createEvent: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findAllEvents: RequestHandler = async (req, res, next) => {
+const findAllEvents: RequestHandler = async (req, res, next) => {
     try{
         const events = await EventModel.find();
         if(events)
@@ -47,7 +45,7 @@ export const findAllEvents: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findEventById: RequestHandler = async (req, res, next) => {
+const findEventById: RequestHandler = async (req, res, next) => {
     try{
         const event = await EventModel.findById({_id: req.params.id});
         if(event)
@@ -58,15 +56,14 @@ export const findEventById: RequestHandler = async (req, res, next) => {
     }
 }
 
-
-export const deleteEvent: RequestHandler = async (req, res, next) => {
+const deleteEvent: RequestHandler = async (req, res, next) => {
     try{
       let id = req.params.id
       if(!ObjectId.isValid(id)){
         return next({message: 'ID invalido', status: 400});
       }
       const deleted = await EventModel.deleteOne({_id: id})
-      if (deleted){
+      if (deleted.deletedCount > 0){
         res.status(200).send('Evento deletado com sucesso')
       }else{
         next({message: 'Evento não encontrado', status: 404});
@@ -76,7 +73,8 @@ export const deleteEvent: RequestHandler = async (req, res, next) => {
     }
   }
 
-export const updateEvent: RequestHandler = async (req, res, next) => {
+
+  const updateEvent: RequestHandler = async (req, res, next) => {
     try{
         const data: TEvent = req.body;
         const event = await EventModel.findById({_id: req.params.id});
@@ -90,9 +88,7 @@ export const updateEvent: RequestHandler = async (req, res, next) => {
     }
 }
 
-
-
-export const UserHistoryEvents: RequestHandler = async (req, res, next) => {    
+const UserHistoryEvents: RequestHandler = async (req, res, next) => {    
     try {
         const userId = req.params.userId as string;
         const user = await User.findById({_id: userId}); 
@@ -109,7 +105,7 @@ export const UserHistoryEvents: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const EventsByLocation: RequestHandler = async (req, res, next) => {    
+const EventsByLocation: RequestHandler = async (req, res, next) => {    
     try {
         const lat = parseFloat(req.params.lat as string);
         const lng = parseFloat(req.params.lng as string);
@@ -130,3 +126,5 @@ export const EventsByLocation: RequestHandler = async (req, res, next) => {
         next({message: error, status: 500});
     }
 }
+
+export default { createEvent, findAllEvents, updateEvent, findEventById, deleteEvent, UserHistoryEvents, EventsByLocation }

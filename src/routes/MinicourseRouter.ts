@@ -1,17 +1,18 @@
 import { Router } from "express";
-import { createMinicourse, deleteMinicourse, findAllMinicourse, findMinicourseById, updateMinicourse } from "../server/controllers/MinicourseController";
+import MinicourseController from "../server/controllers/MinicourseController";
 import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
-
+import { isAuthenticated } from "../server/shared/middlewares/Auth";
 
 export const minicoursesRouter = Router();
 
+minicoursesRouter.use(isAuthenticated);
 
-minicoursesRouter.get('/', findAllMinicourse);
+minicoursesRouter.get('/', MinicourseController.findAllMinicourse);
 
-minicoursesRouter.get('/:id', findMinicourseById);
+minicoursesRouter.get('/:id', MinicourseController.findMinicourseById);
 
-minicoursesRouter.post('/', createMinicourse);
+minicoursesRouter.post('/', MinicourseController.createMinicourse);
 
-minicoursesRouter.delete('/:id', deleteMinicourse);
+minicoursesRouter.delete('/:id', MinicourseController.deleteMinicourse);
 
-minicoursesRouter.put('/:id', updateMinicourse);
+minicoursesRouter.put('/:id', MinicourseController.updateMinicourse);

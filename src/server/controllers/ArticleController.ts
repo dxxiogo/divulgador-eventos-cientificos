@@ -36,7 +36,7 @@ const deleteArticle : RequestHandler = async (req, res, next) => {
     }
 
     let deleted = await ArticleModel.deleteOne({_id: id})
-    if (deleted){
+    if (deleted.deletedCount > 0){
       res.status(200).send('Artigo deletado com sucesso')
     }else{
       next({message: 'Artigo não encontrado', status: 404});

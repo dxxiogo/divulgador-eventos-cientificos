@@ -1,23 +1,26 @@
 import { Router } from "express";
-import { EventsByLocation, UserHistoryEvents, createEvent, deleteEvent, findAllEvents, findEventById, updateEvent} from "../server/controllers/EventsController";
+import EventController from "../server/controllers/EventsController";
 import { upload } from "../server/shared/middlewares/Multer";
 import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
-import { eventSchema } from "../server/schema/YupSchemas";
+import { eventSchema } from "../server/shared/services/YupSchemas";
+import { isAuthenticated } from "../server/shared/middlewares/Auth";
 
 export const eventsRouter = Router();
 
 const eventBodyValidator = bodyValidator(eventSchema);
 
-eventsRouter.get('/', findAllEvents);
+eventsRouter.use(isAuthenticated);
 
-eventsRouter.get('/:id', findEventById);
+eventsRouter.get('/', EventController.findAllEvents);
 
-eventsRouter.post('/',upload.single('photo'), eventBodyValidator, createEvent);
+eventsRouter.get('/:id', EventController.findEventById);
 
-eventsRouter.delete('/:id', deleteEvent);
+eventsRouter.post('/',upload.single('photo'), eventBodyValidator, EventController.createEvent);
 
-eventsRouter.put('/:id', updateEvent);
+eventsRouter.delete('/:id', EventController.deleteEvent);
 
-eventsRouter.get('/historico-de-eventos/:userId', UserHistoryEvents);
+eventsRouter.put('/:id', EventController.updateEvent);
 
-eventsRouter.get('/eventos-por-localizacao/:lat/:lng', EventsByLocation);
+eventsRouter.get('/historico-de-eventos/:userId', EventController.UserHistoryEvents);
+
+eventsRouter.get('/eventos-por-localizacao/:lat/:lng', EventController.EventsByLocation);

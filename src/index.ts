@@ -13,6 +13,8 @@ import { minicoursesRouter } from "./routes/MinicourseRouter";
 import { feedbackRouter } from "./routes/FeedbackRouter";
 import { teamsRouter } from "./routes/TeamsRouter";
 import { hackathonRouter } from "./routes/HackathonRouter";
+import express from "express";
+
 
 const port = process.env.PORT || 5000;
 
@@ -22,6 +24,7 @@ server.listen(port, () => {
 
 server.use(cors());
 server.use(cookieParser());
+server.use(express.json())
 
 server.use('/evento', eventsRouter);
 server.use('/usuario', UserRouter);

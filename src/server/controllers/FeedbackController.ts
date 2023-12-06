@@ -4,7 +4,7 @@ import EventModel from "../models/EventModel";
 import FeedbackModel from "../models/FeedbackModel";
 import { ObjectId } from "mongodb";
 
-export const createFeedback: RequestHandler = async (req, res, next) => {
+const createFeedback: RequestHandler = async (req, res, next) => {
     const data: TFeedback = req.body;
     try {
         const event = await EventModel.findById(data.idEvent);
@@ -21,7 +21,7 @@ export const createFeedback: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findAllFeedback: RequestHandler = async (req, res, next) => {
+const findAllFeedback: RequestHandler = async (req, res, next) => {
     try{
         const feedbacks = await FeedbackModel.find();
         if(feedbacks)
@@ -32,7 +32,7 @@ export const findAllFeedback: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findFeedbackById: RequestHandler = async (req, res, next) => {
+const findFeedbackById: RequestHandler = async (req, res, next) => {
     try{
         const feedback = await FeedbackModel.findById({_id: req.params.id});
         if(feedback)
@@ -43,15 +43,14 @@ export const findFeedbackById: RequestHandler = async (req, res, next) => {
     }
 }
 
-
-export const deleteFeedback : RequestHandler = async (req, res, next) => {
+const deleteFeedback : RequestHandler = async (req, res, next) => {
     try{
       const id = req.params.id
       if(!ObjectId.isValid(id)){
         return next({message: 'ID invalido', status: 400});
       }
       const deleted = await FeedbackModel.deleteOne({_id: id})
-      if (deleted){
+      if (deleted.deletedCount > 0){
         res.status(200).send('Feedback deletado com sucesso')
       }else{
         next({message: 'Feedback não encontrado', status: 404});
@@ -61,7 +60,8 @@ export const deleteFeedback : RequestHandler = async (req, res, next) => {
     }
   }
 
-export const updateFeedback: RequestHandler = async (req, res, next) => {
+
+  const updateFeedback: RequestHandler = async (req, res, next) => {
     try{
         const data: TFeedback = req.body;
         const feedback = await FeedbackModel.findById({_id: req.params.id});
@@ -74,3 +74,5 @@ export const updateFeedback: RequestHandler = async (req, res, next) => {
         next({message: error, status: 500});
     }
 }
+
+export default { createFeedback, findAllFeedback, updateFeedback, findFeedbackById, deleteFeedback }

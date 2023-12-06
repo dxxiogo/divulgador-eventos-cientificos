@@ -4,7 +4,7 @@ import TeamModel from "../models/TeamModel";
 import { ObjectId } from "mongodb";
 import HackathonModel from "../models/HackathonModel";
 
-export const createTeam: RequestHandler = async (req, res, next) => {
+const createTeam: RequestHandler = async (req, res, next) => {
     const data: TTeam = req.body;
     console.log(data);
     try {
@@ -22,7 +22,7 @@ export const createTeam: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findAllTeam: RequestHandler = async (req, res, next) => {
+const findAllTeam: RequestHandler = async (req, res, next) => {
     try{
         const teams = await TeamModel.find();
         if(teams)
@@ -33,7 +33,7 @@ export const findAllTeam: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findTeamById: RequestHandler = async (req, res, next) => {
+const findTeamById: RequestHandler = async (req, res, next) => {
     try{
         const team = await TeamModel.findById({_id: req.params.id});
         if(team)
@@ -44,8 +44,7 @@ export const findTeamById: RequestHandler = async (req, res, next) => {
     }
 }
 
-
-export const deleteTeam : RequestHandler = async (req, res, next) => {
+const deleteTeam : RequestHandler = async (req, res, next) => {
     try{
       const id = req.params.id
   
@@ -54,8 +53,8 @@ export const deleteTeam : RequestHandler = async (req, res, next) => {
       }
   
       const deleted = await TeamModel.deleteOne({_id: id})
-      if (deleted){
-        res.status(200).send('Time deletado com sucesso')
+      if (deleted.deletedCount > 0){
+        res.status(200).send('Time deletado com sucesso');
       }else{
         next({message: 'Time não encontrado', status: 404});
       }
@@ -64,12 +63,11 @@ export const deleteTeam : RequestHandler = async (req, res, next) => {
     }
 }
 
-export const updateTeam: RequestHandler = async (req, res, next) => {
+const updateTeam: RequestHandler = async (req, res, next) => {
     try{
         const data: TTeam = req.body;
         const team = await TeamModel.findById({_id: req.params.id});
         if(team) {
-            console.log(data);
             await TeamModel.updateOne({_id: req.params.id}, data);
             return res.status(200).send('Time atualizado com sucesso!');
         }
@@ -78,3 +76,5 @@ export const updateTeam: RequestHandler = async (req, res, next) => {
         next({message: error, status: 500});
     }
 }
+
+export default { createTeam, findAllTeam, findTeamById, deleteTeam, updateTeam }

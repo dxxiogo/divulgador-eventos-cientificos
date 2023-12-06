@@ -1,18 +1,21 @@
 import { Router } from "express";
-import { createHackathon, deleteHackathon, findAllHackathon, findHackathonById, updateHackathon } from "../server/controllers/HackathonController";
+import HackathonController from "../server/controllers/HackathonController";
 import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
-import { hackathonSchema } from "../server/schema/YupSchemas";
+import { hackathonSchema } from "../server/shared/services/YupSchemas";
+import { isAuthenticated } from "../server/shared/middlewares/Auth";
 
 export const hackathonRouter = Router();
 
 const hackathonBodyValidator = bodyValidator(hackathonSchema);
 
-hackathonRouter.get('/', findAllHackathon);
+hackathonRouter.use(isAuthenticated);
 
-hackathonRouter.get('/:id', findHackathonById);
+hackathonRouter.get('/', HackathonController.findAllHackathon);
 
-hackathonRouter.post('/', hackathonBodyValidator, createHackathon);
+hackathonRouter.get('/:id', HackathonController.findHackathonById);
 
-hackathonRouter.delete('/:id', deleteHackathon);
+hackathonRouter.post('/', hackathonBodyValidator, HackathonController.createHackathon);
 
-hackathonRouter.put('/:id', updateHackathon);
+hackathonRouter.delete('/:id', HackathonController.deleteHackathon);
+
+hackathonRouter.put('/:id', HackathonController.updateHackathon);

@@ -1,15 +1,18 @@
 import { Router } from "express";
-import { createRequestMinicourse, deleteRequestMinicourse, findAllRequestMinicourse, findRequestMinicourseById, updateRequestMinicourse } from "../server/controllers/RequestMinicourseController";
+import RequestMinicourseController from "../server/controllers/RequestMinicourseController";
+import { requestMinicourseSchema } from "../server/shared/services/YupSchemas";
+import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
 
 export const requestMinicoursesRouter = Router();
 
+const requestMinicourseBodyValidator = bodyValidator(requestMinicourseSchema);
 
-requestMinicoursesRouter.get('/', findAllRequestMinicourse);
+requestMinicoursesRouter.get('/', RequestMinicourseController.findAllRequestMinicourse);
 
-requestMinicoursesRouter.get('/:id', findRequestMinicourseById);
+requestMinicoursesRouter.get('/:id', RequestMinicourseController.findRequestMinicourseById);
 
-requestMinicoursesRouter.post('/', createRequestMinicourse);
+requestMinicoursesRouter.post('/', RequestMinicourseController.createRequestMinicourse);
 
-requestMinicoursesRouter.delete('/:id', deleteRequestMinicourse);
+requestMinicoursesRouter.delete('/:id', RequestMinicourseController.deleteRequestMinicourse);
 
-requestMinicoursesRouter.put('/:id', updateRequestMinicourse);
+requestMinicoursesRouter.put('/:id', RequestMinicourseController.updateRequestMinicourse);

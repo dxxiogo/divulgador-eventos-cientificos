@@ -17,11 +17,9 @@ const EventSchema = new Schema({
         type: {
           type: String, 
           enum: ['Point'],
-          required: true
         },
         coordinates: {
           type: [Number],
-          required: true
         }
     },
     participants: [{type: Schema.Types.ObjectId, ref: 'Usuario'}],

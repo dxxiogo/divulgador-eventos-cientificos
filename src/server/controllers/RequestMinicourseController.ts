@@ -4,16 +4,16 @@ import { TMinicourse } from "../../../@types/types";
 import EventModel from "../models/EventModel";
 import { ObjectId } from "mongodb";
 
-export const createRequestMinicourse: RequestHandler = async (req, res, next) => {
+const createRequestMinicourse: RequestHandler = async (req, res, next) => {
     const data: TMinicourse = req.body;
     try {
-        const event = await EventModel.findById(data.idEvent);
+        const event = await EventModel.findById(data.eventId);
         if(!event)
             return next({message: 'Evento não encontrado', status: 404});
         if(data){
-            const newEvent = new RequestMinicourse(data)
-            await newEvent.save()
-            return res.status(201).json(newEvent);
+            const newMinicourseRequest = new RequestMinicourse(data)
+            await newMinicourseRequest.save()
+            return res.status(201).json(newMinicourseRequest);
         }
         next({message: 'Não foi possível criar a requisição de minicurso', status: 400});
     } catch (error) {
@@ -21,7 +21,7 @@ export const createRequestMinicourse: RequestHandler = async (req, res, next) =>
     }
 }
 
-export const findAllRequestMinicourse: RequestHandler = async (req, res, next) => {
+const findAllRequestMinicourse: RequestHandler = async (req, res, next) => {
     try{
         const requestMinicourse = await RequestMinicourse.find();
         if(requestMinicourse)
@@ -32,7 +32,7 @@ export const findAllRequestMinicourse: RequestHandler = async (req, res, next) =
     }
 }
 
-export const findRequestMinicourseById: RequestHandler = async (req, res, next) => {
+const findRequestMinicourseById: RequestHandler = async (req, res, next) => {
     try{
         const requestMinicourse = await RequestMinicourse.findById({_id: req.params.id});
         if(requestMinicourse)
@@ -43,8 +43,7 @@ export const findRequestMinicourseById: RequestHandler = async (req, res, next) 
     }
 }
 
-
-export const deleteRequestMinicourse : RequestHandler = async (req, res, next) => {
+const deleteRequestMinicourse : RequestHandler = async (req, res, next) => {
     try{
       const id = req.params.id
   
@@ -52,17 +51,16 @@ export const deleteRequestMinicourse : RequestHandler = async (req, res, next) =
         return next({message: 'ID invalido', status: 400});
       }
       const deleted = await RequestMinicourse.deleteOne({_id: id})
-      if (deleted){
-        res.status(200).send('Requisição de minicurso deletada com sucesso')
-      }else{
-        next({message: 'Requisição de minicurso não encontrada', status: 404});
+      if (deleted.deletedCount > 0){
+        return res.status(200).send('Requisição de minicurso deletada com sucesso')
       }
+      return next({message: 'Requisição de minicurso não encontrada', status: 404});
     }catch(error){
       next({message: error, status: 500});
     }
-  }
+}
 
-export const updateRequestMinicourse: RequestHandler = async (req, res, next) => {
+const updateRequestMinicourse: RequestHandler = async (req, res, next) => {
     try{
         const data: TMinicourse = req.body;
         const requestMinicourse = await RequestMinicourse.findById({_id: req.params.id});
@@ -75,3 +73,5 @@ export const updateRequestMinicourse: RequestHandler = async (req, res, next) =>
         next({message: error, status: 500});
     }
 }
+
+export default { createRequestMinicourse, findAllRequestMinicourse, findRequestMinicourseById, deleteRequestMinicourse, updateRequestMinicourse }

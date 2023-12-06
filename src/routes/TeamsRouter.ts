@@ -1,18 +1,21 @@
 import { Router } from "express";
-import { createTeam, deleteTeam, findAllTeam, findTeamById, updateTeam } from "../server/controllers/TeamController";
+import TeamController from "../server/controllers/TeamController";
 import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
-import { teamSchema } from "../server/schema/YupSchemas";
+import { teamSchema } from "../server/shared/services/YupSchemas";
+import { isAuthenticated } from "../server/shared/middlewares/Auth";
 
 export const teamsRouter = Router();
 
 const teamBodyValidator = bodyValidator(teamSchema);
 
-teamsRouter.get('/', findAllTeam);
+teamsRouter.use(isAuthenticated);
 
-teamsRouter.get('/:id', findTeamById);
+teamsRouter.get('/', TeamController.findAllTeam);
 
-teamsRouter.post('/', teamBodyValidator, createTeam);
+teamsRouter.get('/:id', TeamController.findTeamById);
 
-teamsRouter.delete('/:id', deleteTeam);
+teamsRouter.post('/', teamBodyValidator,TeamController.createTeam);
 
-teamsRouter.put('/:id', updateTeam);
+teamsRouter.delete('/:id', TeamController.deleteTeam);
+
+teamsRouter.put('/:id', teamBodyValidator, TeamController.updateTeam);

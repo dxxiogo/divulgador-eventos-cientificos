@@ -54,7 +54,7 @@ const deleteUser : RequestHandler = async (req, res, next) => {
       let deleted = await UserModel.deleteOne({
         email: userEmail
       })
-      if (deleted){
+      if (deleted.deletedCount > 0){
         res.status(200).send('Usuário deletado com sucesso')
       }else{
         next({message: 'Usuário não encontrado', status: 404});

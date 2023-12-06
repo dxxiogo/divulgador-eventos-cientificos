@@ -1,18 +1,21 @@
 import { Router } from "express";
-import { createFeedback, deleteFeedback, findAllFeedback, findFeedbackById, updateFeedback } from "../server/controllers/FeedbackController";
+import FeedbackController from "../server/controllers/FeedbackController";
 import { bodyValidator } from "../server/shared/middlewares/BodyValidator";
-import { feedbackSchema } from "../server/schema/YupSchemas";
+import { feedbackSchema } from "../server/shared/services/YupSchemas";
+import { isAuthenticated } from "../server/shared/middlewares/Auth";
 
 export const feedbackRouter = Router();
 
 const feedbackBodyValidator = bodyValidator(feedbackSchema)
 
-feedbackRouter.get('/', findAllFeedback);
+feedbackRouter.use(isAuthenticated);
 
-feedbackRouter.get('/:id', findFeedbackById);
+feedbackRouter.get('/', FeedbackController.findAllFeedback);
 
-feedbackRouter.post('/', feedbackBodyValidator ,createFeedback);
+feedbackRouter.get('/:id', FeedbackController.findFeedbackById);
 
-feedbackRouter.delete('/:id', deleteFeedback);
+feedbackRouter.post('/', feedbackBodyValidator , FeedbackController.createFeedback);
 
-feedbackRouter.put('/:id', updateFeedback);
+feedbackRouter.delete('/:id', FeedbackController.deleteFeedback);
+
+feedbackRouter.put('/:id', feedbackBodyValidator,  FeedbackController.updateFeedback);

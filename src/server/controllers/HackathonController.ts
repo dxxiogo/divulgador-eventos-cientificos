@@ -4,7 +4,7 @@ import EventModel from "../models/EventModel";
 import HackathonModel from "../models/HackathonModel";
 import { ObjectId } from "mongodb";
 
-export const createHackathon: RequestHandler = async (req, res, next) => {
+const createHackathon: RequestHandler = async (req, res, next) => {
     const data: THackaton = req.body;
     try {
         const event = await EventModel.findById(data.idEvent);
@@ -21,7 +21,7 @@ export const createHackathon: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findAllHackathon: RequestHandler = async (req, res, next) => {
+const findAllHackathon: RequestHandler = async (req, res, next) => {
     try{
         const hackathons = await HackathonModel.find();
         if(hackathons)
@@ -32,7 +32,7 @@ export const findAllHackathon: RequestHandler = async (req, res, next) => {
     }
 }
 
-export const findHackathonById: RequestHandler = async (req, res, next) => {
+const findHackathonById: RequestHandler = async (req, res, next) => {
     try{
         const hackathon = await HackathonModel.findById({_id: req.params.id});
         if(hackathon)
@@ -43,8 +43,7 @@ export const findHackathonById: RequestHandler = async (req, res, next) => {
     }
 }
 
-
-export const deleteHackathon: RequestHandler = async (req, res, next) => {
+const deleteHackathon: RequestHandler = async (req, res, next) => {
     try{
       const id = req.params.id
   
@@ -52,7 +51,7 @@ export const deleteHackathon: RequestHandler = async (req, res, next) => {
         return next({message: 'ID invalido', status: 400});
       }
       const deleted = await HackathonModel.deleteOne({_id: id})
-      if (deleted){
+      if (deleted.deletedCount > 0){
         res.status(200).send('Hackathon deletado com sucesso')
       }else{
         next({message: 'Hackathon não encontrado', status: 404});
@@ -60,9 +59,10 @@ export const deleteHackathon: RequestHandler = async (req, res, next) => {
     }catch(error){
       next({message: error, status: 500});
     }
-  }
+}
 
-export const updateHackathon: RequestHandler = async (req, res, next) => {
+
+const updateHackathon: RequestHandler = async (req, res, next) => {
     try{
         const data: THackaton = req.body;
         const hackathon = await HackathonModel.findById({_id: req.params.id});
@@ -75,3 +75,5 @@ export const updateHackathon: RequestHandler = async (req, res, next) => {
         next({message: error, status: 500});
     }
 }
+
+export default { createHackathon, findAllHackathon, findHackathonById, updateHackathon, deleteHackathon }

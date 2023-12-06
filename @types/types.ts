@@ -43,7 +43,8 @@ export type TEvent = {
         type: 'Point',
         coordinates: number[]
     },
-    feedbacks: TFeedback[]
+    feedbacks: TFeedback[],
+    participants: string[]
 }
 
 export type DefaultError = {
@@ -54,11 +55,11 @@ export type DefaultError = {
 export type TMinicourse = {
     subject: string,
     ministering: string,
-    registrants: string[]
-    idEvent: string
+    registrants?: string[]
+    eventId: string
 }
 
-export type THackaton = {
+export type THackaton = { 
     name: string,
     teams: string[],
     idEvent: string
