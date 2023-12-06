@@ -141,6 +141,7 @@ const getCertificates: RequestHandler = async (req, res) => {
                 const page = await browser.newPage();
                 await page.setContent(certificate);
                 await page.emulateMediaType('screen');
+                
                 const pdf = await page.pdf({
                     path: path.join(__dirname, `../../../certificados/${user.name}-${event.name}-Certificado.pdf`),
                     format: 'A4',
