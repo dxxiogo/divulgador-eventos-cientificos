@@ -11,7 +11,7 @@ teamsRouter.get('/', findAllTeam);
 
 teamsRouter.get('/:id', findTeamById);
 
-teamsRouter.post('/', createTeam);
+teamsRouter.post('/', teamBodyValidator, createTeam);
 
 teamsRouter.delete('/:id', deleteTeam);
 
