@@ -4,6 +4,7 @@ import { TEvent, TUser } from "../../../@types/types";
 import UserModel from "../models/UserModel";
 import puppeteer from "puppeteer";
 import path from "path";
+import fs from "fs";
 import { ObjectId } from "mongodb";
 
 const createEvent: RequestHandler = async (req, res, next) => {
@@ -132,7 +133,12 @@ const getCertificates: RequestHandler = async (req, res) => {
     try{
         const user : TUser | null = await UserModel.findById(req.params.userid);
         if(user){
-            console.log(user)
+            const __dirname = path.resolve();
+
+            const dirPath = path.join(__dirname, 'certificados');
+            if (!fs.existsSync(dirPath)){
+                fs.mkdirSync(dirPath, { recursive: true });
+            }
             const event : TEvent | null = await EventModel.findById(req.params.id);
             if ( !event ) return res.status(404).send('Evento não encontrado!');
             if(event?.participants.includes(user._id)){
@@ -143,12 +149,12 @@ const getCertificates: RequestHandler = async (req, res) => {
                 await page.emulateMediaType('screen');
                 
                 const pdf = await page.pdf({
-                    path: path.join(__dirname, `../../../certificados/${user.name}-${event.name}-Certificado.pdf`),
+                    path: path.join(__dirname, `certificados/${user.name}-${event.name}-Certificado.pdf`),
                     format: 'A4',
                     printBackground: true
                 });
                 await browser.close();
-                return res.status(200).sendFile(path.join(__dirname, `../../../certificados/${user.name}-${event.name}-Certificado.pdf`));
+                return res.status(200).sendFile(path.join(__dirname, `certificados/${user.name}-${event.name}-Certificado.pdf`));
             }else{
                 return res.status(404).send('Usuário não participou do evento');
             }
@@ -156,6 +162,7 @@ const getCertificates: RequestHandler = async (req, res) => {
             return res.status(404).send('Usuário não encontrado!');
         }
     } catch (error) {
+        console.error(error);
         return res.status(500).json({error})
     }
 }
