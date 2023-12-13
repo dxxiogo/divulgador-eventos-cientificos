@@ -9,7 +9,7 @@ import { articleSchema } from "../server/shared/services/YupSchemas";
 const articleBodyValidator = bodyValidator(articleSchema);
 ArticleRouter.use(isAuthenticated);
 
-ArticleRouter.post("/", articleBodyValidator, ArticleController.createArticle);
+ArticleRouter.post("/", upload.single('fileContent'), articleBodyValidator, ArticleController.createArticle);
 
 ArticleRouter.get("/", ArticleController.findAllArticles);
 

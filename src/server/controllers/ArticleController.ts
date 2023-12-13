@@ -6,7 +6,7 @@ import { sendEmails } from "../EmailConfig";
 
 const createArticle: RequestHandler = async (req, res, next) => {
   try {
-    const data: TArticle = req.body;
+    let data: TArticle = req.body;
     if (data) {
       if(req.file?.buffer && req.file?.mimetype ){
         data.fileContent =  {
