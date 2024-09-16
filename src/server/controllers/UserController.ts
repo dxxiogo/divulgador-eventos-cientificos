@@ -10,42 +10,59 @@ const createUser: RequestHandler = async (req, res, next) => {
   try {
     const data: TUser = req.body;
     if (data) {
-      const userExists = await UserModel.findOne({email: data.email});
-      if(userExists){
+      const userExists = await UserModel.findOne({ email: data.email });
+      if (userExists) {
         return next({ message: "Usuário já cadastrado", status: 400 });
       }
       const hashPassword = await bcrypt.hash(data.password, genSaltSync(salt));
       data.password = hashPassword;
       const newUser = await UserModel.create(data);
 
-      const token = jwt.sign({email: newUser.email}, process.env.SECRET_KEY as string, {expiresIn: process.env.JWT_EXPIRE});
+      const token = jwt.sign(
+        { email: newUser.email },
+        process.env.SECRET_KEY as string,
+        { expiresIn: process.env.JWT_EXPIRE }
+      );
       newUser.password = undefined;
-      res.status(201).cookie("token", token).send(newUser);
-    }else {
-      next({message: 'Dados inválidos', status: 400});
+      
+      res.status(201).json({ user: newUser, token });
+    } else {
+      next({ message: "Dados inválidos", status: 400 });
     }
   } catch (error) {
-    next({message : error, status: 500});
+    next({ message: error, status: 500 });
   }
-}
+};
 
-const loginUser : RequestHandler = async (req, res, next) => {
-  const {token} = req.cookies;
-  if(token){
-    return next({error: 'Usuário já autenticado', status: 401})
-  }
-  const user = await UserModel.findOne({email: req.body.email});
+const loginUser: RequestHandler = async (req, res, next) => {
+  try {
+    const user = await UserModel.findOne({ email: req.body.email });
+    
+    if (!user) {
+      return next({ error: "Email ou senha inválidos", status: 401 });
+    }
 
-  const password = user?.password as string
-  const match = await bcrypt.compare(req.body.password, password);
-  if(match){
-    const token = jwt.sign({email: user?.email}, process.env.SECRET_KEY as string, {expiresIn: process.env.JWT_EXPIRE});
-    if(user?.password) user.password = undefined;
-    res.status(200).cookie("token", token).send(user);
-  }else{
-    next({error: 'Email ou senha inválidos', status: 401})
+    const password = user.password as string;
+    const match = await bcrypt.compare(req.body.password, password);
+
+    if (match) {
+      const token = jwt.sign(
+        { email: user.email },
+        process.env.SECRET_KEY as string,
+        { expiresIn: process.env.JWT_EXPIRE }
+      );
+
+      user.password = undefined;
+
+      res.status(200).json({ user, token });
+    } else {
+      next({ error: "Email ou senha inválidos", status: 401 });
+    }
+  } catch (error) {
+    next({ message: error, status: 500 });
   }
-}
+};
+
 
 const deleteUser : RequestHandler = async (req, res, next) => {
   try{

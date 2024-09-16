@@ -1,32 +1,29 @@
-import { RequestHandler } from 'express';
-import jwt from "jsonwebtoken";
-import { DefaultError } from '../../../../@types/types';
+import { verify } from "jsonwebtoken";
+import { DefaultError } from "../../../../@types/types";
+import { RequestHandler } from "express";
 
-const isAuthenticated : RequestHandler = async (req, res, next) => {
+export const isAuthenticated : RequestHandler = async (req, res, next) => {
   try{
-    const {token} = req.cookies;
-    console.log(token)
-    if (!token){
+    console.log(req)
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) {
       let err : DefaultError = { error:"Usuário não autenticado", status: 401};
-      next(err);
+      return next(err);
     }
     let key : string = process.env.SECRET_KEY as string;
-    if (!key){
+    if (!key) {
       let err : DefaultError = { error:"Chave de autenticação não encontrada", status: 401};
-      next(err)
+      return next(err);
     }
-    await jwt.verify(token, key, (err: any, decoded: any)=>{
-      if (err){
-        let err : DefaultError = { error:"Token invalido", status: 401};
+    await verify(token, key, (err: any, decoded: any) => {
+      if (err) {
+        let err : DefaultError = { error:"Token inválido", status: 401};
         return next(err);
       }
-      //Manda o email do usuário para o cookie da requisição
-      req.cookies.UserEmail = decoded.email ;
+      req.cookies.UserEmail = decoded.email; 
       next();
     });
-  }catch(error){
+  } catch(error) {
     return next(error);
   }
 }
-
-export {isAuthenticated};
