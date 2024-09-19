@@ -11,7 +11,7 @@ const createEvent: RequestHandler = async (req, res, next) => {
     const data: TEvent = req.body;
     try {
         let newEvent = null;
-        if(data){
+        if (data) {
             newEvent = new EventModel({
                 name: data.name,
                 description: data.description,
@@ -21,20 +21,17 @@ const createEvent: RequestHandler = async (req, res, next) => {
                 location: data.location,
                 organizingCommitte: data.organizingCommitte,
                 theme: data.theme,
-                photo: {
-                    data: req.file?.buffer,
-                    contentType: req.file?.mimetype
-                },
+                photo: req.file ? `/images/${req.file.filename}` : null,
                 participants: []
-            })
-            await newEvent.save()
+            });
+            await newEvent.save();
             return res.status(201).json(newEvent);
         }
-        next({message: 'Não foi possível adicionar o evento!', status: 400});;
+        next({ message: 'Não foi possível adicionar o evento!', status: 400 });
     } catch (err) {
-        return res.status(500).json({err});
+        return res.status(500).json({ err });
     }
-}
+};
 
 const findAllEvents: RequestHandler = async (req, res, next) => {
     try{
@@ -48,6 +45,7 @@ const findAllEvents: RequestHandler = async (req, res, next) => {
 }
 
 const findEventById: RequestHandler = async (req, res, next) => {
+    console.log("findEventById")
     try{
         const event = await EventModel.findById({_id: req.params.id});
         if(event)

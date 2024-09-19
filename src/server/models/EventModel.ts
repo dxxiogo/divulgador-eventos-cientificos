@@ -1,18 +1,15 @@
 import mongoose from "mongoose";
-import {Schema} from 'mongoose';
+import { Schema } from 'mongoose';
 
 const EventSchema = new Schema({
     name: String,
     description: String,
     theme: String,
-    organizer: {type: Schema.Types.ObjectId, ref: 'Usuario'},
+    organizer: { type: Schema.Types.ObjectId, ref: 'Usuario' },
     organizingCommitte: String,
     startDate: Date,
     endDate: Date,
-    photo: {
-        data: Buffer,
-        contentType: String
-    },
+    photo: String, 
     location:  {
         type: {
           type: String, 
@@ -22,8 +19,8 @@ const EventSchema = new Schema({
           type: [Number],
         }
     },
-    participants: [{type: Schema.Types.ObjectId, ref: 'Usuario'}],
-    feedbacks: [{type: Schema.Types.ObjectId, ref: 'Feedback'}]
+    participants: [{ type: Schema.Types.ObjectId, ref: 'Usuario' }],
+    feedbacks: [{ type: Schema.Types.ObjectId, ref: 'Feedback' }]
 });
 
 export default mongoose.model('Evento', EventSchema);

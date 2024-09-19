@@ -22,7 +22,7 @@ server.listen(port, () => {
     console.log('Servidor rodando na porta: ' + port);
 });
 
-server.use(cors());
+//server.use(cors({}));
 server.use(cookieParser());
 server.use(express.json())
 
@@ -34,6 +34,8 @@ server.use('/minicurso', minicoursesRouter)
 server.use('/feedback', feedbackRouter);
 server.use('/time', teamsRouter);
 server.use('/hackathon', hackathonRouter);
+
+server.use('/images', express.static('images'));
 
 server.use(errorMiddleware);
 
