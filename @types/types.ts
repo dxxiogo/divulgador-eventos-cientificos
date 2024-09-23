@@ -38,6 +38,7 @@ export type TEvent = {
     startDate: Date,
     endDate: Date,
     organizer: string,
+    userId: string,
     photo: {
         data: Buffer,
         contentType: String

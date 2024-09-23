@@ -24,6 +24,8 @@ eventsRouter.put('/:id', EventController.updateEvent);
 
 eventsRouter.get('/historico-de-eventos/:userId', EventController.UserHistoryEvents);
 
+eventsRouter.get('/meus-eventos/:id', EventController.findEventsCreatedByUser)
+
 eventsRouter.get('/eventos-por-localizacao/:lat/:lng', EventController.EventsByLocation);
 
 eventsRouter.get('/:id/certificates/:userid', EventController.getCertificates);

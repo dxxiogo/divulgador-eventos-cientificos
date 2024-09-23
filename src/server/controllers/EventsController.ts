@@ -18,6 +18,7 @@ const createEvent: RequestHandler = async (req, res, next) => {
                 endDate: data.endDate,
                 startDate: data.startDate,
                 feedbacks: [],
+                organizer: data.organizer,
                 location: data.location,
                 organizingCommitte: data.organizingCommitte,
                 theme: data.theme,
@@ -33,6 +34,17 @@ const createEvent: RequestHandler = async (req, res, next) => {
     }
 };
 
+const findEventsCreatedByUser:RequestHandler = async (req, res, next) => {
+    try{
+        const event = await EventModel.find({organizer: req.params.id});
+        if(event)
+            return res.status(200).json(event);
+        next({message: 'Eventos não encontrados', status: 404});
+    } catch (error) {
+        return res.status(500).json({error})
+    }
+}
+
 const findAllEvents: RequestHandler = async (req, res, next) => {
     try{
         const events = await EventModel.find();
@@ -45,7 +57,6 @@ const findAllEvents: RequestHandler = async (req, res, next) => {
 }
 
 const findEventById: RequestHandler = async (req, res, next) => {
-    console.log("findEventById")
     try{
         const event = await EventModel.findById({_id: req.params.id});
         if(event)
@@ -205,7 +216,7 @@ const removeParticipant: RequestHandler = async (req, res) => {
     }
 }
 
-export default { createEvent, findAllEvents, updateEvent, findEventById, deleteEvent, UserHistoryEvents, EventsByLocation , addParticipant, removeParticipant, getCertificates }
+export default { createEvent, findAllEvents, updateEvent, findEventById, deleteEvent, UserHistoryEvents, EventsByLocation , addParticipant, removeParticipant, findEventsCreatedByUser, getCertificates }
 
 function createCertificate(event : string, date : string, name : string){
     return `<!DOCTYPE html>

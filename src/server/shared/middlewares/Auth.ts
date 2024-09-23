@@ -4,7 +4,6 @@ import { RequestHandler } from "express";
 
 export const isAuthenticated : RequestHandler = async (req, res, next) => {
   try{
-    console.log(req)
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) {
       let err : DefaultError = { error:"Usuário não autenticado", status: 401};
