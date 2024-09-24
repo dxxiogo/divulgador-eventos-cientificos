@@ -16,7 +16,7 @@ eventsRouter.get('/', EventController.findAllEvents);
 
 eventsRouter.get('/:id', EventController.findEventById);
 
-eventsRouter.post('/',upload.single('photo'), eventBodyValidator, EventController.createEvent);
+eventsRouter.post('/', upload.single('photo'), eventBodyValidator, EventController.createEvent);
 
 eventsRouter.delete('/:id', EventController.deleteEvent);
 

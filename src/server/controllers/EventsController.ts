@@ -9,6 +9,8 @@ import { ObjectId } from "mongodb";
 
 const createEvent: RequestHandler = async (req, res, next) => {
     const data: TEvent = req.body;
+    data.location = JSON.parse(req.body.location);
+
     try {
         let newEvent = null;
         if (data) {

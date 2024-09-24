@@ -29,10 +29,8 @@ export const eventSchema = yup.object().shape({
     organizingCommitte: yup.string(),
     startDate: yup.date().required(),
     endDate: yup.date().required(),
-    photo: yup.object().shape({
-      data: yup.mixed(),
-      contentType: yup.string(),
-    }),
+    location: yup.string().required(),
+    photo: yup.mixed(),
     participants: yup.array().of(yup.string().required()),
     feedbacks: yup.array().of(yup.string().required()),
   });

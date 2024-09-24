@@ -4,6 +4,7 @@ import 'dotenv/config'
 tryConnection().catch(err => console.log(err));
 
 export async function tryConnection() {
+  console.log('Conectando ao Mongo...'+process.env.MONGO_DATABASE_URL)
   if(process.env.MONGO_DATABASE_URL){
     await mongoose.connect(process.env.MONGO_DATABASE_URL).then(() =>{
       console.log('Conectado ao Mongo!')
