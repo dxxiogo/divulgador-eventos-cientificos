@@ -5,28 +5,38 @@ import { Minicourse } from "../models/MinicourseModel";
 import RequestMinicourse from "../models/RequestMinicourseModel";
 import { ObjectId } from "mongodb";
 
+
 const createMinicourse: RequestHandler = async (req, res, next) => {
     const reqMinicourseId = req.body.reqMinicourseId as string;
 
     try {
         const reqMinicourseData = await RequestMinicourse.findById({_id: reqMinicourseId});
-        if(!reqMinicourseData)
-            return next({message: 'A requisição de criação para esse minicurso não foi encontrada!', status: 404});
-        if(reqMinicourseData){
-            const newMinicourse = new Minicourse({
-                registrants: [],
-                idEvent: reqMinicourseData.eventId,
-                subject: reqMinicourseData.subject,
-                ministering: reqMinicourseData.ministering});
+        if (!reqMinicourseData)
+            return next({ message: 'A requisição de criação para esse minicurso não foi encontrada!', status: 404 });
 
-            await newMinicourse.save()
-            return res.status(201).json(newMinicourse);
-        }
-        next({message: 'Não foi possível criar um novo minicurso.', status: 404});
+        const newMinicourse = new Minicourse({
+            registrants: [],
+            idEvent: reqMinicourseData.eventId,
+            subject: reqMinicourseData.subject,
+            ministering: reqMinicourseData.ministering
+        });
+
+        await newMinicourse.save();
+
+        const event = await EventModel.findById(reqMinicourseData.eventId);
+        if (!event)
+            return next({ message: 'Evento não encontrado!', status: 404 });
+
+        event.minicourses.push(newMinicourse._id);
+        await event.save();
+
+        return res.status(201).json(newMinicourse);
     } catch (error) {
-        next({message: error, status: 500});;
+        next({ message: error, status: 500 });
     }
 }
+
+
 
 const findAllMinicourse: RequestHandler = async (req, res, next) => {
     try{

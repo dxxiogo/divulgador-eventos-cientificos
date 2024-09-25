@@ -24,6 +24,7 @@ const createEvent: RequestHandler = async (req, res, next) => {
                 location: data.location,
                 organizingCommitte: data.organizingCommitte,
                 theme: data.theme,
+                minicourses: [],
                 photo: req.file ? `/images/${req.file.filename}` : null,
                 participants: []
             });
@@ -152,7 +153,7 @@ const getCertificates: RequestHandler = async (req, res) => {
             }
             const event : TEvent | null = await EventModel.findById(req.params.id);
             if ( !event ) return res.status(404).send('Evento não encontrado!');
-            if(event?.participants.includes(user._id)){
+            if(event?.participants.includes(user.email)){
                 const certificate = createCertificate(event.name, event.startDate.toString(), user.name);
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
@@ -179,24 +180,28 @@ const getCertificates: RequestHandler = async (req, res) => {
 }
 
 const addParticipant: RequestHandler = async (req, res) => {
-    try{
-        const user : TUser | null = await UserModel.findOne({email: req.params.email});
-        if(user){
-            const event : TEvent | null = await EventModel.findById(req.params.id);
-            if ( !event ) return res.status(404).send('Evento não encontrado!');
-            if(!event?.participants.find(participant => participant === user._id)){
-                event.participants.push(user._id);
-                await EventModel.updateOne({_id: req.params.id}, event);
+    try {
+        const user: TUser | null = await UserModel.findOne({ email: req.params.email });
+        if (user) {
+            const event: TEvent | null = await EventModel.findById(req.params.id);
+            if (!event) return res.status(404).send('Evento não encontrado!');
+            console.log("neheh")
+            const isParticipant = event.participants.some(participant => participant.toString() === user._id.toString());
+
+            if (!isParticipant) {
+                event.participants.push(user.email);
+                await EventModel.updateOne({ _id: req.params.id }, { participants: event.participants }); 
                 return res.status(200).send('Usuário adicionado ao evento com sucesso!');
-            }else{
-                return res.status(404).send('Usuário já participou do evento');
+            } else {
+                return res.status(400).send('Usuário já está inscrito no evento'); 
             }
         }
         return res.status(404).send('Usuário não encontrado!');
     } catch (error) {
-        return res.status(500).json({error})
+        return res.status(500).json({ error });
     }
-}
+};
+
 
 const removeParticipant: RequestHandler = async (req, res) => {
     try{
@@ -204,8 +209,8 @@ const removeParticipant: RequestHandler = async (req, res) => {
         if(user){
             const event : TEvent | null = await EventModel.findById(req.params.id);
             if ( !event ) return res.status(404).send('Evento não encontrado!');
-            if(event?.participants.find(participant => participant === user._id)){
-                event.participants = event.participants.filter(participant => participant !== user._id);
+            if(event?.participants.find(participant => participant === user.email)){
+                event.participants = event.participants.filter(participant => participant !== user.email);
                 await EventModel.updateOne({_id: req.params.id}, event);
                 return res.status(200).send('Usuário removido do evento com sucesso!');
             }else{

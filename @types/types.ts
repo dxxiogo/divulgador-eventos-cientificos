@@ -48,7 +48,7 @@ export type TEvent = {
         coordinates: number[]
     },
     feedbacks: TFeedback[],
-    participants: ObjectId[]
+    participants: string[]
 }
 
 export type DefaultError = {
