@@ -42,6 +42,16 @@ const findRequestMinicourseById: RequestHandler = async (req, res, next) => {
         next({message: error, status: 500});
     }
 }
+const findRequestMinicourseByEventId: RequestHandler = async (req, res, next) => {
+    try{
+        const requestMinicourse = await RequestMinicourse.find({eventId: req.params.id});
+        if(requestMinicourse)
+            return res.status(200).json(requestMinicourse);
+        next({message: 'Requisição de minicurso não encontrada', status: 404});
+    } catch (error) {
+        next({message: error, status: 500});
+    }
+}
 
 const deleteRequestMinicourse : RequestHandler = async (req, res, next) => {
     try{
@@ -74,4 +84,4 @@ const updateRequestMinicourse: RequestHandler = async (req, res, next) => {
     }
 }
 
-export default { createRequestMinicourse, findAllRequestMinicourse, findRequestMinicourseById, deleteRequestMinicourse, updateRequestMinicourse }
+export default {findRequestMinicourseByEventId, createRequestMinicourse, findAllRequestMinicourse, findRequestMinicourseById, deleteRequestMinicourse, updateRequestMinicourse }

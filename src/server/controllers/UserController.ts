@@ -95,6 +95,20 @@ const findUser : RequestHandler = async (req, res, next) => {
     next({message: error, status: 500});
   }
 }
+const findUserById : RequestHandler = async (req, res, next) => {
+  try{
+    let userId = req.params.id;
+    if(userId){
+      const user = await UserModel.findById(userId);
+      res.status(200).send(user);
+    }else {
+      next({message: 'Id invalido', status: 400});
+    }
+  }catch(error){
+    next({message: error, status: 500});
+  }
+}
+
 
 const findAllUsers : RequestHandler =async (req , res, next) => {
   try {
@@ -120,4 +134,4 @@ const updateUser : RequestHandler = async (req, res, next) => {
   }
 }
 
-export default { createUser, deleteUser, findUser, findAllUsers, updateUser, loginUser };
+export default { createUser, deleteUser, findUser, findAllUsers, updateUser, loginUser ,findUserById};

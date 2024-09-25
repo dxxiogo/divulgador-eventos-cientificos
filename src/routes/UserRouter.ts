@@ -19,5 +19,6 @@ UserRouter.delete("/:email", isAuthenticated, UserController.deleteUser);
 UserRouter.put("/:email", userBodyValidator, isAuthenticated, UserController.updateUser);
 
 UserRouter.get("/:email", isAuthenticated, UserController.findUser);
+UserRouter.get("/byId/:id", isAuthenticated, UserController.findUserById);
 
 export default UserRouter;

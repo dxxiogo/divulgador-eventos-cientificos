@@ -10,6 +10,7 @@ minicoursesRouter.use(isAuthenticated);
 minicoursesRouter.get('/', MinicourseController.findAllMinicourse);
 
 minicoursesRouter.get('/:id', MinicourseController.findMinicourseById);
+minicoursesRouter.get('/event/:id', MinicourseController.findMinicourseByEventId);
 
 minicoursesRouter.post('/', MinicourseController.createMinicourse);
 

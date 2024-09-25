@@ -10,6 +10,7 @@ const requestMinicourseBodyValidator = bodyValidator(requestMinicourseSchema);
 requestMinicoursesRouter.get('/', RequestMinicourseController.findAllRequestMinicourse);
 
 requestMinicoursesRouter.get('/:id', RequestMinicourseController.findRequestMinicourseById);
+requestMinicoursesRouter.get('/event/:id', RequestMinicourseController.findRequestMinicourseByEventId);
 
 requestMinicoursesRouter.post('/', requestMinicourseBodyValidator, RequestMinicourseController.createRequestMinicourse);
 
