@@ -101,4 +101,23 @@ const updateMinicourse: RequestHandler = async (req, res, next) => {
     }
 }
 
-export default { createMinicourse, findAllMinicourse, findMinicourseById, deleteMinicourse, updateMinicourse,findMinicourseByEventId }
+const subscribeMinicourse: RequestHandler = async (req, res, next) => {
+    try {
+        const minicourseId = req.params.id;
+        const userId = new ObjectId(req.params.userId);
+
+        const minicourse = await Minicourse.findById(minicourseId);
+        if (!minicourse)
+            return next({ message: 'Minicurso não encontrado!', status: 404 });
+        if (minicourse.registrants.includes(userId))
+            return next({ message: 'Usuário já inscrito no minicurso!', status: 400 });
+        minicourse.registrants.push(userId);
+        await minicourse.save();
+        return res.status(200).send('Usuário inscrito com sucesso!');
+    }catch(error){
+        next({message: error, status: 400});
+    }
+
+}
+
+export default { createMinicourse, findAllMinicourse, findMinicourseById, deleteMinicourse, updateMinicourse,findMinicourseByEventId ,subscribeMinicourse}
