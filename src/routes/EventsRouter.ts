@@ -30,6 +30,6 @@ eventsRouter.get('/eventos-por-localizacao/:lat/:lng', EventController.EventsByL
 
 eventsRouter.get('/:id/certificates/:userid', EventController.getCertificates);
 
-eventsRouter.post('/:id/adicionar-participante/:email', EventController.addParticipant);
+eventsRouter.post('/:id/adicionar-participante/:userId', EventController.addParticipant);
 
 eventsRouter.post('/:id/removeParticipant/:email', EventController.removeParticipant);

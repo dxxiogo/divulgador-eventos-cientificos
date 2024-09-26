@@ -20,7 +20,7 @@ const EventSchema = new Schema({
         }
     },
     minicourses: [{type: Schema.Types.ObjectId, ref: 'Minicurso'}],
-    participants: [],
+    participants: [{type: Schema.Types.ObjectId, ref: 'Usuario'}],
     feedbacks: [{ type: Schema.Types.ObjectId, ref: 'Feedback' }]
 });
 

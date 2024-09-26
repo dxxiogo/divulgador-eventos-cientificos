@@ -153,7 +153,7 @@ const getCertificates: RequestHandler = async (req, res) => {
             }
             const event : TEvent | null = await EventModel.findById(req.params.id);
             if ( !event ) return res.status(404).send('Evento não encontrado!');
-            if(event?.participants.includes(user.email)){
+            if(event?.participants.includes(user._id)){
                 const certificate = createCertificate(event.name, event.startDate.toString(), user.name);
                 const browser = await puppeteer.launch();
                 const page = await browser.newPage();
@@ -181,7 +181,7 @@ const getCertificates: RequestHandler = async (req, res) => {
 
 const addParticipant: RequestHandler = async (req, res) => {
     try {
-        const user: TUser | null = await UserModel.findOne({ email: req.params.email });
+        const user: TUser | null = await UserModel.findOne({ _id: req.params.userId });
         if (user) {
             const event: TEvent | null = await EventModel.findById(req.params.id);
             if (!event) return res.status(404).send('Evento não encontrado!');
@@ -189,7 +189,7 @@ const addParticipant: RequestHandler = async (req, res) => {
             const isParticipant = event.participants.some(participant => participant.toString() === user._id.toString());
 
             if (!isParticipant) {
-                event.participants.push(user.email);
+                event.participants.push(user._id);
                 await EventModel.updateOne({ _id: req.params.id }, { participants: event.participants }); 
                 return res.status(200).send('Usuário adicionado ao evento com sucesso!');
             } else {
@@ -209,8 +209,8 @@ const removeParticipant: RequestHandler = async (req, res) => {
         if(user){
             const event : TEvent | null = await EventModel.findById(req.params.id);
             if ( !event ) return res.status(404).send('Evento não encontrado!');
-            if(event?.participants.find(participant => participant === user.email)){
-                event.participants = event.participants.filter(participant => participant !== user.email);
+            if(event?.participants.find(participant => participant === user._id)){
+                event.participants = event.participants.filter(participant => participant !== user._id);
                 await EventModel.updateOne({_id: req.params.id}, event);
                 return res.status(200).send('Usuário removido do evento com sucesso!');
             }else{
